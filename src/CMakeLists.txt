@@ -1,17 +1,33 @@
-# The Flutter tooling requires that developers have CMake 3.10 or later
-# installed. You should not increase this version, as doing so will cause
-# the plugin to fail to compile for some customers of the plugin.
 cmake_minimum_required(VERSION 3.10)
 
-project(speech_detector_library VERSION 0.0.1 LANGUAGES C)
+project(fvad_library VERSION 0.0.1 LANGUAGES C)
 
-add_library(speech_detector SHARED
-  "speech_detector.c"
+include_directories(libfvad/include)
+
+add_library(vad SHARED
+  libfvad/src/signal_processing/division_operations.c
+  libfvad/src/signal_processing/energy.c
+  libfvad/src/signal_processing/get_scaling_square.c
+  libfvad/src/signal_processing/resample_48khz.c
+  libfvad/src/signal_processing/resample_by_2_internal.c
+  libfvad/src/signal_processing/resample_fractional.c
+  libfvad/src/signal_processing/spl_inl.c
+  libfvad/src/vad/vad_core.c
+  libfvad/src/vad/vad_filterbank.c
+  libfvad/src/vad/vad_gmm.c
+  libfvad/src/vad/vad_sp.c
+  libfvad/src/fvad.c
 )
 
-set_target_properties(speech_detector PROPERTIES
-  PUBLIC_HEADER speech_detector.h
-  OUTPUT_NAME "speech_detector"
+set_target_properties(fvad PROPERTIES
+  PUBLIC_HEADER libfvad/include/fvad.h
+  OUTPUT_NAME "libfvad"
 )
 
-target_compile_definitions(speech_detector PUBLIC DART_SHARED_LIB)
+if (WIN32)
+set_target_properties(fvad PROPERTIES
+  WINDOWS_EXPORT_ALL_SYMBOLS ON
+)
+endif (WIN32)
+
+target_compile_definitions(fvad PUBLIC DART_SHARED_LIB)
